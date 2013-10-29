@@ -682,11 +682,13 @@ static void mic_detect_work_func(struct work_struct *work)
 		mic = HEADSET_BEATS;
 		new_state |= BIT_HEADSET_NO_MIC;
 		HS_LOG("HEADSET_BEATS");
+		set_35mm_hw_state(0);
 		break;
 	case HEADSET_MIC:
 		mic = HEADSET_BEATS;
 		new_state |= BIT_HEADSET;
 		HS_LOG("HEADSET_BEATS");
+		set_35mm_hw_state(0);
 		break;
 	case HEADSET_METRICO:
 		new_state |= BIT_HEADSET;

@@ -410,7 +410,8 @@ static int tag_chunk(struct inode *inode, struct audit_tree *tree)
 	spin_unlock(&chunk_entry->lock);
 	spin_unlock(&old_entry->lock);
 	fsnotify_destroy_mark(old_entry);
-	fsnotify_put_mark(old_entry); /* pair to fsnotify_find mark_entry */
+	fsnotify_put_mark(old_entry); 
+	fsnotify_put_mark(old_entry); 
 	return 0;
 }
 

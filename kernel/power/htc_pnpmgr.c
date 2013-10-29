@@ -390,9 +390,16 @@ static struct attribute_group apps_attr_group = {
 	.attrs = apps_g,
 };
 
+static struct attribute_group sysinfo_attr_group = {
+       .attrs = sysinfo_g,
+};
+
+static struct attribute_group battery_attr_group = {
+	.attrs = battery_g,
+};
 
 #ifdef CONFIG_HOTPLUG_CPU
-static int cpu_hotplug_callback(struct notifier_block *nfb, unsigned long action, void *hcpu)
+static int __cpuinit cpu_hotplug_callback(struct notifier_block *nfb, unsigned long action, void *hcpu)
 {
 	switch (action) {
 		
@@ -410,8 +417,8 @@ static int cpu_hotplug_callback(struct notifier_block *nfb, unsigned long action
 static struct notifier_block __refdata cpu_hotplug_notifier = {
 	.notifier_call = cpu_hotplug_callback,
 	.priority = -10, 
-
 };
+#endif
 
 static unsigned int slack_time_ms;
 static unsigned int step_time_ms;

@@ -37,8 +37,16 @@
 #include <linux/sched.h>
 #include <linux/rcupdate.h>
 #include <linux/notifier.h>
+#include <linux/mutex.h>
+#include <linux/delay.h>
 #include <linux/swap.h>
-#include <linux/compaction.h>
+
+#ifdef CONFIG_HIGHMEM
+	#define _ZONE ZONE_HIGHMEM
+#else
+	#define _ZONE ZONE_NORMAL
+#endif
+
 
 extern void show_meminfo(void);
 static uint32_t lowmem_debug_level = 2;
@@ -73,8 +81,6 @@ static unsigned long lowmem_fork_boost_timeout;
 static uint32_t lowmem_fork_boost = 0;
 static uint32_t lowmem_sleep_ms = 1;
 static uint32_t lowmem_only_kswapd_sleep = 1;
-
-extern int compact_nodes(bool sync);
 
 #define lowmem_print(level, x...)			\
 	do {						\
@@ -200,24 +206,21 @@ static int lowmem_shrink(struct shrinker *s, struct shrink_control *sc)
 		}
 	}
 
-	if (sc->nr_to_scan > 0)
-		lowmem_print(3, "lowmem_shrink %lu, %x, ofree %d %d, ma %d\n",
-				sc->nr_to_scan, sc->gfp_mask, other_free,
-				other_file, min_score_adj);
+	if (nr_to_scan > 0)
+		lowmem_print(3, "lowmem_shrink %lu, %x, ofree %d %d, ma %d, rfree %d\n",
+				nr_to_scan, sc->gfp_mask, other_free,
+				other_file, min_score_adj, reserved_free);
 	rem = global_page_state(NR_ACTIVE_ANON) +
 		global_page_state(NR_ACTIVE_FILE) +
 		global_page_state(NR_INACTIVE_ANON) +
 		global_page_state(NR_INACTIVE_FILE);
-
-	if (sc->nr_to_scan <= 0 && min_score_adj == OOM_SCORE_ADJ_MAX + 1) {
-		lowmem_print(5, "lowmem_shrink %lu, %x, not shrinking\n",
-			     sc->nr_to_scan, sc->gfp_mask);
-		return 0;
-	}
-
-	if (sc->nr_to_scan <= 0) {
+	if (nr_to_scan <= 0 || min_score_adj == OOM_SCORE_ADJ_MAX + 1) {
 		lowmem_print(5, "lowmem_shrink %lu, %x, return %d\n",
-			     sc->nr_to_scan, sc->gfp_mask, rem);
+			     nr_to_scan, sc->gfp_mask, rem);
+
+		if (nr_to_scan > 0)
+			mutex_unlock(&scan_mutex);
+
 		return rem;
 	}
 	selected_oom_score_adj = min_score_adj;
@@ -246,14 +249,6 @@ static int lowmem_shrink(struct shrinker *s, struct shrink_control *sc)
 		if (!p)
 			continue;
 
-		if (test_tsk_thread_flag(p, TIF_MEMDIE) &&
-		    time_before_eq(jiffies, lowmem_deathpending_timeout)) {
-			lowmem_print(2, "%d (%s), oom_adj %d score_adj %d, is exiting, return\n"
-					, p->pid, p->comm, p->signal->oom_adj, p->signal->oom_score_adj);
-			task_unlock(p);
-			rcu_read_unlock();
-			return rem;
-		}
 		oom_score_adj = p->signal->oom_score_adj;
 		if (oom_score_adj < min_score_adj) {
 			task_unlock(p);
@@ -294,14 +289,18 @@ static int lowmem_shrink(struct shrinker *s, struct shrink_control *sc)
 		send_sig(SIGKILL, selected, 0);
 		set_tsk_thread_flag(selected, TIF_MEMDIE);
 		rem -= selected_tasksize;
-	} else {
-		rem = -1;
+		rcu_read_unlock();
+		
+		if (!(lowmem_only_kswapd_sleep && !current_is_kswapd())) {
+			msleep_interruptible(lowmem_sleep_ms);
+		}
 	}
+	else
+		rcu_read_unlock();
+
 	lowmem_print(4, "lowmem_shrink %lu, %x, return %d\n",
 		     sc->nr_to_scan, sc->gfp_mask, rem);
-	rcu_read_unlock();
-	if (selected)
-		compact_nodes(false);
+	mutex_unlock(&scan_mutex);
 	return rem;
 }
 

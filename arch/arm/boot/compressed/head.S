@@ -27,6 +27,14 @@
 		.macro	writeb, ch, rb
 		mcr	p14, 0, \ch, c0, c5, 0
 		.endm
+#elif defined(CONFIG_CPU_V7)
+		.macro	loadsp, rb, tmp
+		.endm
+		.macro	writeb, ch, rb
+wait:		mrc	p14, 0, pc, c0, c1, 0
+		bcs	wait
+		mcr	p14, 0, \ch, c0, c5, 0
+		.endm
 #elif defined(CONFIG_CPU_XSCALE)
 		.macro	loadsp, rb, tmp
 		.endm
@@ -58,7 +66,7 @@
 		add	\rb, \rb, #0x00010000	@ Ser1
 #endif
 		.endm
-#elif defined(CONFIG_ARCH_S3C24XX)
+#elif defined(CONFIG_ARCH_S3C2410)
 		.macro loadsp, rb, tmp
 		mov	\rb, #0x50000000
 		add	\rb, \rb, #0x4000 * CONFIG_S3C_LOWLEVEL_UART_PORT
@@ -269,11 +277,10 @@ restart:	adr	r0, LC0
 		 * of RAM and hope for the best.
 		 */
 		cmp	r0, #1
-		sub	r0, r4, #TEXT_OFFSET
-		add	r0, r0, #0x100
+		sub	r0, r4, #(TEXT_OFFSET - 0x100)
 		mov	r1, r6
 		sub	r2, sp, r6
-		bleq	atags_to_fdt
+		blne	atags_to_fdt
 
 		ldmfd	sp!, {r0-r3, ip, lr}
 		sub	sp, sp, #0x10000
@@ -461,8 +468,7 @@ not_relocated:	mov	r0, #0
 		mov	r0, #0			@ must be zero
 		mov	r1, r7			@ restore architecture number
 		mov	r2, r8			@ restore atags pointer
- ARM(		mov	pc, r4	)		@ call kernel
- THUMB(		bx	r4	)		@ entry point is always ARM
+		mov	pc, r4			@ call kernel
 
 		.align	2
 		.type	LC0, #object
@@ -611,15 +617,6 @@ __setup_mmu:	sub	r3, r4, #16384		@ Page directory size
 		mov	pc, lr
 ENDPROC(__setup_mmu)
 
-@ Enable unaligned access on v6, to allow better code generation
-@ for the decompressor C code:
-__armv6_mmu_cache_on:
-		mrc	p15, 0, r0, c1, c0, 0	@ read SCTLR
-		bic	r0, r0, #2		@ A (no unaligned access fault)
-		orr	r0, r0, #1 << 22	@ U (v6 unaligned access model)
-		mcr	p15, 0, r0, c1, c0, 0	@ write SCTLR
-		b	__armv4_mmu_cache_on
-
 __arm926ejs_mmu_cache_on:
 #ifdef CONFIG_CPU_DCACHE_WRITETHROUGH
 		mov	r0, #4			@ put dcache in WT mode
@@ -657,11 +654,9 @@ __armv7_mmu_cache_on:
 		mcrne	p15, 0, r0, c8, c7, 0	@ flush I,D TLBs
 #endif
 		mrc	p15, 0, r0, c1, c0, 0	@ read control reg
+		bic	r0, r0, #1 << 28	@ clear SCTLR.TRE
 		orr	r0, r0, #0x5000		@ I-cache enable, RR cache replacement
 		orr	r0, r0, #0x003c		@ write buffer
-		bic	r0, r0, #2		@ A (no unaligned access fault)
-		orr	r0, r0, #1 << 22	@ U (v6 unaligned access model)
-						@ (needed for ARM1176)
 #ifdef CONFIG_MMU
 #ifdef CONFIG_CPU_ENDIAN_BE8
 		orr	r0, r0, #1 << 25	@ big-endian page tables
@@ -671,7 +666,6 @@ __armv7_mmu_cache_on:
 		mcrne	p15, 0, r3, c2, c0, 0	@ load page table pointer
 		mcrne	p15, 0, r1, c3, c0, 0	@ load domain access control
 #endif
-		mcr	p15, 0, r0, c7, c5, 4	@ ISB
 		mcr	p15, 0, r0, c1, c0, 0	@ load control register
 		mrc	p15, 0, r0, c1, c0, 0	@ and read it back
 		mov	r0, #0
@@ -900,7 +894,7 @@ proc_types:
 
 		.word	0x0007b000		@ ARMv6
 		.word	0x000ff000
-		W(b)	__armv6_mmu_cache_on
+		W(b)	__armv4_mmu_cache_on
 		W(b)	__armv4_mmu_cache_off
 		W(b)	__armv6_mmu_cache_flush
 
