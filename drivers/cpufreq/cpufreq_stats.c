@@ -43,6 +43,19 @@ static cputime64_t cpu3_time_in_state[CPU_FREQ_LEVEL_NUMBER] = {0};
 static unsigned int cpu3_total_trans = 0;
 #endif
 
+#ifdef CONFIG_ARCH_APQ8064
+static cputime64_t cpu1_time_in_state[32] = {0};
+static cputime64_t cpu2_time_in_state[32] = {0};
+static cputime64_t cpu3_time_in_state[32] = {0};
+
+static unsigned int cpu1_total_trans;
+static unsigned int cpu2_total_trans;
+static unsigned int cpu3_total_trans;
+#elif defined(CONFIG_ARCH_MSM8960)
+static cputime64_t cpu1_time_in_state[32] = {0};
+static unsigned int cpu1_total_trans;
+#endif
+
 struct cpufreq_stats {
 	unsigned int cpu;
 	unsigned int total_trans;
@@ -127,6 +140,28 @@ static ssize_t show_overall_total_trans(struct kobject *kobj,
 #endif
 }
 
+#ifdef CONFIG_ARCH_APQ8064
+static ssize_t show_cpu1_total_trans(struct cpufreq_policy *policy, char *buf)
+{
+       return sprintf(buf, "%d\n", cpu1_total_trans);
+}
+
+static ssize_t show_cpu2_total_trans(struct cpufreq_policy *policy, char *buf)
+{
+       return sprintf(buf, "%d\n", cpu2_total_trans);
+}
+
+static ssize_t show_cpu3_total_trans(struct cpufreq_policy *policy, char *buf)
+{
+       return sprintf(buf, "%d\n", cpu3_total_trans);
+}
+#elif defined(CONFIG_ARCH_MSM8960)
+static ssize_t show_cpu1_total_trans(struct cpufreq_policy *policy, char *buf)
+{
+       return sprintf(buf, "%d\n", cpu1_total_trans);
+}
+#endif
+
 static ssize_t show_time_in_state(struct cpufreq_policy *policy, char *buf)
 {
 	ssize_t len = 0;
@@ -178,6 +213,80 @@ static ssize_t show_overall_time_in_state(struct kobject *kobj,
 	return len;
 }
 
+
+#ifdef CONFIG_ARCH_APQ8064
+static ssize_t show_cpu1_time_in_state(struct cpufreq_policy *policy, char *buf)
+{
+	ssize_t len = 0;
+	int i;
+	struct cpufreq_stats *stat = per_cpu(cpufreq_stats_table, 1);
+	if (stat)
+		cpufreq_stats_update(1);
+	else
+		stat = per_cpu(cpufreq_stats_table, 0);
+	if (!stat)
+		return 0;
+	for (i = 0; i < stat->state_num; i++) {
+		len += sprintf(buf + len, "%u %llu\n", stat->freq_table[i],
+			(unsigned long long)cputime64_to_clock_t(cpu1_time_in_state[i]));
+	}
+	return len;
+}
+
+static ssize_t show_cpu2_time_in_state(struct cpufreq_policy *policy, char *buf)
+{
+	ssize_t len = 0;
+	int i;
+	struct cpufreq_stats *stat = per_cpu(cpufreq_stats_table, 2);
+	if (stat)
+		cpufreq_stats_update(2);
+	else
+		stat = per_cpu(cpufreq_stats_table, 0);
+	if (!stat)
+		return 0;
+	for (i = 0; i < stat->state_num; i++) {
+		len += sprintf(buf + len, "%u %llu\n", stat->freq_table[i],
+			(unsigned long long)cputime64_to_clock_t(cpu2_time_in_state[i]));
+	}
+	return len;
+}
+
+static ssize_t show_cpu3_time_in_state(struct cpufreq_policy *policy, char *buf)
+{
+	ssize_t len = 0;
+	int i;
+	struct cpufreq_stats *stat = per_cpu(cpufreq_stats_table, 3);
+	if (stat)
+		cpufreq_stats_update(3);
+	else
+		stat = per_cpu(cpufreq_stats_table, 0);
+	if (!stat)
+		return 0;
+	for (i = 0; i < stat->state_num; i++) {
+		len += sprintf(buf + len, "%u %llu\n", stat->freq_table[i],
+			(unsigned long long)cputime64_to_clock_t(cpu3_time_in_state[i]));
+	}
+	return len;
+}
+#elif defined(CONFIG_ARCH_MSM8960)
+static ssize_t show_cpu1_time_in_state(struct cpufreq_policy *policy, char *buf)
+{
+	ssize_t len = 0;
+	int i;
+	struct cpufreq_stats *stat = per_cpu(cpufreq_stats_table, 1);
+	if (stat)
+		cpufreq_stats_update(1);
+	else
+		stat = per_cpu(cpufreq_stats_table, 0);
+	if (!stat)
+		return 0;
+	for (i = 0; i < stat->state_num; i++) {
+		len += sprintf(buf + len, "%u %llu\n", stat->freq_table[i],
+			(unsigned long long)cputime64_to_clock_t(cpu1_time_in_state[i]));
+	}
+	return len;
+}
+#endif
 
 #ifdef CONFIG_CPU_FREQ_STAT_DETAILS
 static ssize_t show_trans_table(struct cpufreq_policy *policy, char *buf)
@@ -452,17 +561,21 @@ static int cpufreq_stat_cpu_callback(struct notifier_block *nfb,
 		cpufreq_update_policy(cpu);
 		break;
 	case CPU_DOWN_PREPARE:
+	case CPU_DOWN_PREPARE_FROZEN:
 		cpufreq_stats_free_sysfs(cpu);
 		break;
 	case CPU_DEAD:
 	case CPU_DEAD_FROZEN:
 		cpufreq_stats_free_table(cpu);
 		break;
+	case CPU_DOWN_FAILED:
+	case CPU_DOWN_FAILED_FROZEN:
+		cpufreq_stats_create_table_cpu(cpu);
+		break;
 	}
 	return NOTIFY_OK;
 }
 
-/* priority=1 so this will get called before cpufreq_remove_dev */
 static struct notifier_block cpufreq_stat_cpu_notifier __refdata = {
 	.notifier_call = cpufreq_stat_cpu_callback,
 	.priority = 1,

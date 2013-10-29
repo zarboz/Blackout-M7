@@ -224,6 +224,8 @@ endif
 
 ifdef CONFIG_BT
 	obj-$(CONFIG_MACH_MONARUDO) += board-monarudo-rfkill.o  htc_bdaddress.o
+	obj-$(CONFIG_MACH_DELUXE_J) += board-deluxe_j-rfkill.o  htc_bdaddress.o
+	obj-$(CONFIG_MACH_IMPRESSION_J) += board-impression_j-rfkill.o  htc_bdaddress.o
 	obj-$(CONFIG_MACH_M7_UL) += board-m7-rfkill.o  htc_bdaddress.o htc_4335_wl_reg.o
 	obj-$(CONFIG_MACH_M7_WLS) += board-m7wl-rfkill.o  htc_bdaddress.o htc_4335_wl_reg.o
 endif
@@ -347,6 +349,8 @@ obj-$(CONFIG_MACH_VALENTE_WX) += board-valente_wx.o board-valente_wx-regulator.o
 obj-$(CONFIG_MACH_VALENTE_WX) += board-valente_wx-keypad.o
 obj-$(CONFIG_MACH_VALENTE_WX) += htc_bdaddress.o
 obj-$(CONFIG_MACH_VALENTE_WX) += htc_util.o
+
+
 
 
 

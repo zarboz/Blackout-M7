@@ -1,0 +1,281 @@
+9516d65 thermal: Fix critical enable/disable bug from STOCK source This fixes a critical bug which only allowed to disable the thermal guard but not to re-enable it again. Once disabled the thermal guard would stay off until rebooted. This allows to re-enable it again. (sysfs)
+5ab32de enabling fast
+aa9ea9b Removed headset_amp_event() method calls. Conflicting with official mic patch update
+ef895e7 Update sources to 1.29.401.16_R
+6a61d6b Update sources to 1.29.401.12
+e473abe Revert "Added graphite optimizations"
+a3403be Move down direct IO plugging
+3907242 Allow arm_memblock_steal() to remove memory from any RAM region
+f60d55c Fix performance regression in O_DIRECT writes to md block devices
+ffd8506 Enable unaligned memory access for v6 and above
+5c993a3 Add generic strnlen_user() function
+762c0c9 Make the interfaces truly generic
+5d4bad4 Sparc's strncpy_from_user is generic enough, move under lib
+6cf57ae Move REPEAT_BYTE definition into linux/kernel.h
+828cf67 Increase portability of strncpy_from_user() implementation
+e6f2dec Optimize strncpy_from_user() zero byte search
+cf142fd Add full proper error handling to strncpy_from_user()
+a74a697 Use generic atomic_dec-based implementation for ARMv6+
+24eba00 Don't read inode->i_blkbits multiple times
+50f4d6b Support asynchronous compaction in lowmemorykiller.
+8ce8011 Modify return values to avoid extra calls
+5e1e0a1 Add binder buffers to kmemleak
+cf8727d Enable HAVE_EFFICIENT_UNALIGNED_ACCESS in all Krait cores.
+f5f72ae Add notifier to force flush outstanding data
+e0b8a8c Added graphite optimizations
+4c2f9cb Expose kblock_schedule_delayed_work()
+a8339e0 Fix null pointer dereference
+96319c5 Always update frequency limits when core is online
+e7d84fd Initialize cpufreq driver early at boot
+2ada21a ARM: proc: Add Krait proc info
+cc7d903 Fixed HTC onmode charging
+9c94c3c Merge branch 'master' of repomachine.zapto.org:zarboz/blackout-m7
+a523131 fixing up pocket detection, long press l2w, and s2w/dt2w bugs
+6e6fbc8 patching to 3.4.18
+83c4a31 increasing readahead
+3a564eb Fixing compile error
+e28c7d8 patching upstream to 3.0.17
+19dc4de Changing ondemand governor for compatibility
+e7e8b8a updating defconfig
+3bc8f5e updating defconfig again
+0397bb3 updating defconfig
+a766369 reverting 192mhz patch and using HFPLL values instead Thanks Faux123 for the method :D
+8c3fbeb Finally Zram is working -.-
+ada24e6 rolling back to 3.7 mainstream zsmalloc/zram/zcache
+21ae2a1 Updating Zram/Zsmalloc/Zcache to 3.9 upstream
+f205eae arch/arm/mach-msm/ acpuclock Removing: 384mhz step as its been reassigned to 192mhz
+49b9ad5 arch/arm/mach-msm: actually underclock :-P
+5d5b42d lightsensor: fix broken lightsensor table!
+1f641ea fixing merge error
+fecf160 arch/arm/mach-msm/acpuclock Fixing VDD to more stable values for boot
+77531fd Merge branch 'master' of repomachine.zapto.org:zarboz/blackout-m7
+8993e46 Fixing d3rp
+75c1cfb arch/arm/mach-msm acpuclock ADD: ultra low clock freqs for screen off battery saving :D
+07981af arch/arm/mach-msm/board-m7-gpu.c Fix: derp i forgot this after fixing clock values
+efc6e6b arch/arm/mach-msm/acpuclock Refining VDD tables
+3f4dda3 	deleted:    arch/arm/boot/boot.img
+2e54813 fixing gcc 4.8 warning
+1e352e6 Fixing voltage issue
+c96fdc6 removing some optimization flags for now
+af7c34b adding 162mhz step
+49de6fd fixing voltages
+9fbec05 fixing gpu clocks
+2c44f37 updating clock tables
+4dc4023 Fixing GPU Clocks
+6a00aac forgot to fix cmdline here
+c11098a updating defconfig
+75cc9d4 arch/arm/mach-msm/ board-m7-gpu this got lost in cherry-picks
+f353e65 usb otg: removing whitelist config to let more devices use OTG host
+755531f added smartmax - WIP
+20fccd0 drivers/input/touchscreen synaptics Change: Some typo's on cmdline detection
+97d083a drivers/input/touchscreen synaptics Change: let aroma make this decision for s2w on/off/l2w
+53cc442 removing extraver
+10cb3f9 msm_mpdecision: boost: if we are not boosted, revib_wq does not need to run at all
+590b27a msm_mpdecision: fix changing boost freq sets min = boost freq
+646c5a1 arch/arm/mach-msm/acpuclk-8064.c Fix: Decrease VDD for high clocks on PVS3
+ee18a10 msm_mpdecision: several changes [read more] reworked cpu_up/down handling which removed redundant code reworked max/min_cpus settings reworked suspend/resume handling to obide by these new changes also reworked locking for per cpu settings
+f74e79a msm_mpdecision: min_cpus & max_cpus should on/offline affected cpus
+73d01d5 adding stock config for recovery building
+e230e24 adding stock defconfig for recovery building
+09ad1cd input/ synaptics_3200 Add: hooks for BB mod by tbalden
+15c7c7c bb: blinking buttons first imlementation
+8adeafe mach-msm: add cmdline_options to kconfig
+f9c0e8c Revert "msm_thermal: remove platform driver"
+7975bab msm_thermal: add stats for throttling
+67c8caf msm_thermal: fix spacing throughout the whole file
+3c5517d msm_thermal: export if we are currently throttled
+431c21c msm_mpdecision: change frequencies for input boost This should provide us with a more battery friendly setup in light usage situations while it still provides the obvious advantages the input boost gives us (faster reaction).
+a25de7a msm_mpdecision: increasing the check delay to 130ms This change brings us down from 10 to 8 checks each second. The input boost reacts without delay which is why we don't need to check for hotplugs so often anymore.
+db73eab msm_mpdecision: boost: don't schedule more check than needed
+3481889 msm_mpdecision: boost: detect changed min frequency and update accordingly
+8f162d5 msm_mpdecision: tune hotplug values
+989a6c9 Patching upstream 3.4.15->3.4.16
+d4dbbf9 just a little much boost for the qualcom 600
+6b23755 Enabling mpdecision speedboost in defconfig
+fb36421 Fixing some patches that were made for GCC 4.8
+805e39f triggering chronjob
+0e35ea5 lost guppie
+522c734 Updating defconfig once more
+967e91c finishing cleanup of GCC 4.8 compat
+963f025 drivers/crypto/msm/qcedev Fix: array subscript out of bound
+63d6c6d fs/namei.c fix Char unused from unused to unused
+463963e msm_mpdecision: input event boost: fix not resetting boost if cpu was unplugged before
+9e5fd5c msm_mpdecision: add sysfs interface for input event boost
+57c90c2 msm_mpdecision: add input event boost [read more]
+e2834a9 msm_mpdecision: stats: if cpu is online, add current ontime to stats
+2ea5f7f msm_mpdecision: fix spacing across the whole file In the past year this evolved to a battlefield of tabs, spaces and different sizes of them. Fix that.
+4717cff arch/arm/mach-msm Add: Force aroma choices for cpu clocks as boot clocks if cmdline_options is enabled
+d4dfb11 just making the version name proper for the device
+4a9e1a6 drivers/input/touchscreen/synaptics Add: cmdline setup for aroma
+4662005 drivers/cpufreq/cpufreq.c Add: cmdline interfacing
+c3c2e27 Moving 2d GPU to board so that cmdline will work properly
+dbe8fcb arch/arm acpuclock-8064.c Fix: typo during cmdline coding
+4683b76 Adding ACPU_CUSTOM_CPU_FREQ to defconfig
+6cd60f2 Deleting leftover garbage from the git
+f20e1c2 arch/arm/mach-msm/board-m7-gpu.c Fix: Vector sizing
+ca0ee5c drivers/cpufreq/cpufreq.c Removed: Freq limiter algo
+94919bf gpu: fix dualports for Adreno320
+bc7e50e Disabling freq limiter in defconfig
+bf4f19a initial import of cmdline functions
+33dcc17 Patching upstream 3.4.14->3.4.15
+b440647 finishing cherry-pick
+8f3df96 power: Remove legacy wakelock code.
+9058beb PM / Sleep: Add wakeup_source_activate and wakeup_source_deactivate tracepoints
+fea5f82 PM / Sleep: Change wakeup source statistics to follow Android
+483d84f PM / Sleep: Use wait queue to signal "no wakeup events in progress"
+c05e39b PM / Sleep: Look for wakeup events in later stages of device suspend
+3636296 cleaning up a bit
+0359d40 Im stupid for removing this
+7880772 Sound Control: Added headphone poweramp controls
+9b7f7bc Sound Control: Updated for HTC One (m7)
+0578841 disabling min_max clock setting
+dd5b918 drivers: cpufreq: address issue where cpus forget their clock speeds
+6088bc7 cpufreq: enable sibling cpu policy sharing
+47d81fd adding optimizations
+19c3640 updating defconfig
+ccef364 Patching upstream 3.0.13->3.0.14
+2613d50 Patching upstream 3.4.12->3.4.13
+9d4c444 Patching upstream 3.0.11->3.0.12
+455a53c adding sprint defconfig
+6a427b7 updating defconfig
+f9d9405 Sweep2wake, logo2menu, logo2wake
+00f3439  pm8xxx: externalizing vibrate method for custom vibration calls (tbalden) https://github.com/TeaMSeven/android_kernel_htc_m7-sense/commit/e808a548141e46a750f29a3b473acd56f10a7912
+68ce975 redo fastcharge
+90ea850 fix hsic wakelock https://www.codeaurora.org/gitweb/quic/la/?p=kernel/msm.git;a=commit;h=41d004c4eaa5565cb8d9113862c3cef1e51be648 and https://www.codeaurora.org/gitweb/quic/la/?p=kernel/msm.git;a=commit;h=6f199aa800253a69e5679d1057823039f1bd65c9
+436c63a patching up to new HTC source (42e6c45)
+9ca6209 add frandom
+3bd2211 ARM: net: JIT compiler for packet filters enabled by default
+d9e754e Updated gitignore removed floating boot.img
+53a79d1 arch/arm/mach-msm Add: speed ID to debugfs
+cf984ad arch/arm/mach-msm/ acpuclk-krait UPDATE:PVS readout to match newer pvs layout
+029cf3f adding sprint defconfig
+3794ce8 Fixing thermald for sprint board
+0e712a5 kernel merge: merge Sprint kernel source (crc-3.4.10-eb45596) into single tree
+bcd5715 board-m7-display: added O2 DE specific patches from HTC source drop
+eb4b42e HTC source drop update: pick from selected t-mo usa source updates
+a0aaafa updating gitignore
+d37e7ac Finishing 3.4.11 cleanup
+867766b Patch upstream to 3.4.11
+39a71a4 Finishing Beats hack
+d759745 sound: Hack beats to always being enabled
+e20c71d lib: Sparc's strncpy_from_user is generic enough, move under  lib/
+d14e68d hrtimer: Consider preemption when migrating hrtimer cpu_bases
+698b929 dynamic fsync: favor true case since most will be using this feature
+60e485f dynamic filesync: add some cache optimizations
+e715527 fs/dyn_fsync: check dyn fsync control's active prior to performing fsync ops
+234e046 Voltage Control: allow for lower minimums
+953c791 arch/arm/kernel/armksyms: fix merge derp
+fc7ddeb Sound Control: Sound control for WCD93xx codec
+e02f7b6 switch the protection of percpu_counter list to spinlock
+2ef8ca2 decompress_unlzo: fix compilation error
+152101f ARM: 7593/1: nommu: do not enable DCACHE_WORD_ACCESS when  !CONFIG_MMU
+4b83a6c ARM: 7592/1: nommu: prevent generation of kernel unaligned memory accesses
+21616ff ARM: 7492/1: add strstr declaration for decompressors
+40f3075 ARM: 7493/1: use generic unaligned.h
+d2f42d6 ARM: dcache: select DCACHE_WORD_ACCESS for little-endian ARMv6+ CPUs
+1e1b5af ARM: use generic strnlen_user and strncpy_from_user functions
+97eb850 lib: Fix generic strnlen_user for 32-bit big-endian machines
+ba670a1 lib: add generic strnlen_user() function
+bf6f1ba modifying Makefile extraver
+8607192 drivers/media/video/msm/msm: fix compilation warning
+fbdf0a6 word-at-a-time: make the interfaces truly generic
+354a61d lib/lzo: Optimize code for CPUs with inefficient unaligned access
+cbe1e09 block: cgroups, kconfig, build bits for BFQ-v6-3.4
+461b624 overall_stats: forward port to kernel 3.4+
+7c1a5f7 overall_stats: make dual/quad core stats configurable via meunconfig
+41a98f5 overall_stats: add overall stats for all available cores
+4c11096 msm: cpufreq: make the gov stop part fully atomic
+8d525e4 scheduler: Re-compute time-average nr_running on read
+bcc4cb0 proc: enhance time-average nr_running stats
+eb8cfe3 scheduler: compute time-average nr_running per run-queue
+3289d63 fs/dyn_sync_cntrl: Linux 3.4 Kernel compatibility fixup
+69e8ea0 fs/dyn_sync_cntrl: dynamic sync control
+78b573b arm/crypto: Add optimized AES and SHA1 routines
+6c32401 Optimized ARM RWSEM algorithm
+8bacba9 lib/string: use glibc version
+241b18f lib/memcopy: use glibc version
+f86c633 drivers/input/touchscreen/synaptics.c ADD: Logo2menu and fix s2w so it relies on soft key area
+8e70615 drivers/input/touchscreen synaptics_3200.c Revert: some testing output and put s2w back on the soft keys rather than that strip above them
+b9026a9 Deleting Kcontrol as it is no longer needed Signed-off-by: Zarboz <zarboz@gmail.com>
+3e7754a adding kcontrol
+9dbe323 drivers/staging: Add: Google snappy compression support
+8408cdf adding defconfig
+2b5a2ee fixing voltages
+4710a94 checkin
+ebdd621 block: add kconfig and makefile triggers for files
+a195846 block: introduce VR I/O scheduler
+7444190 block: Introduce SIO I/O scheduler
+22ec68c Block: Introduce FIOPS I/O scheduler
+2b7c5fd block: introduce BFQ scheduler
+c665628 block: Introduce ROW Scheduler
+2907ed1 staging: Introduce Zcache/Zram/Zsmalloc from 3.6.0 upstream kernel
+477f3fe Logo2Menu picked from Tbalden at https://github.com/TeaMSeven/android_kernel_htc_m7-sense/commit/b664405dde0519aea04d7c4c74aac9f9573d38f4
+9d620ea patching mpdecision to most upstream
+fa59b05 adding in governors
+7241520 Merge branch 'master' of github.com:Team-Blackout/Blackout-M7
+39d1eb7 arch/arm/mach-msm cleanup GPU OC
+deb24a0 arch/arm/mach-msm/acpuclock-krait ADD: Cmdline_options
+b8e8b75 updating gitignore
+8e4e6af arch/arm/mach-msm/ Add: Gpu oc and increase bottleneck
+67279fc arm/kernel return_address Cleanup: useless warning
+10f81a6 Embedding Kcontrol modules to be built with source when avail
+36f7454 arm/mach-msm acpuclock-8064 ADD: 192mhz step
+6faa4fa Kernel/Power main.c Fix: perflock
+27a75af thermal: update upstream msm_thermal with 3-phase control
+994dc37 msm_thermal: patch to upstream
+fa010b3 msm_thermal: 3-phase thermal throttling
+ad11da5 adding defconfig for easy building
+2f495eb arm/mach-msm Makefile:ADD makefile flag for mpdecision
+5de42b2 mach-msm: Add msm_mpdecision
+8ee1980 arm/mach-msm Kconfig: ADD Build switch for Mpdec
+d1b56c0 kernel/wq: fix misuse of __cpuinit for hotplug functions
+274b83e revert hacks for the previous misuse of __cpuinit for hotplug only functions
+57710f1 kbuild: drop cpuinit/cpuexit checks in modpost
+b5688b8 cpuinit: turn __cpuinit into nops
+5b44bfa cpuinit: get rid of __cpuinit, manual fixups
+b6305fe cpuinit: get rid of __cpuinit, sixth regexp
+40ad575 cpuinit: get rid of __cpuinit, fifth regexp
+9a5f1e2 cpuinit: get rid of __cpuinit, fourth regexp
+84a245a cpuinit: get rid of __cpuinit, third regexp
+d41a69a cpuinit: get rid of __cpuinit, second regexp
+9d2e88f cpuinit: get rid of __cpuinit, first regexp
+2b4d6c5 arch/arm/mach-msm/acpuclock-krait ADD: Cmdline_options
+15c7c7e updating gitignore
+7bd405e arch/arm/mach-msm/ Add: Gpu oc and increase bottleneck
+f06e51b arm/kernel return_address Cleanup: useless warning
+98a7dd8 Embedding Kcontrol modules to be built with source when avail
+4709414 arm/mach-msm acpuclock-8064 ADD: 192mhz step
+f898152 Kernel/Power main.c Fix: perflock
+cf219e3 thermal: update upstream msm_thermal with 3-phase control
+e7bb8f8 msm_thermal: patch to upstream
+ff3591e msm_thermal: 3-phase thermal throttling
+495fc6d adding defconfig for easy building
+935721c arm/mach-msm Makefile:ADD makefile flag for mpdecision
+74677e3 mach-msm: Add msm_mpdecision
+aeded6b arm/mach-msm Kconfig: ADD Build switch for Mpdec
+1df0378 kernel/wq: fix misuse of __cpuinit for hotplug functions
+12156a9 revert hacks for the previous misuse of __cpuinit for hotplug only functions
+8d60aff kbuild: drop cpuinit/cpuexit checks in modpost
+cb48b36 cpuinit: turn __cpuinit into nops
+83279af cpuinit: get rid of __cpuinit, manual fixups
+7bf02b5 cpuinit: get rid of __cpuinit, sixth regexp
+8b156af cpuinit: get rid of __cpuinit, fifth regexp
+053f4e5 cpuinit: get rid of __cpuinit, fourth regexp
+8864ea5 cpuinit: get rid of __cpuinit, third regexp
+4f6682b cpuinit: get rid of __cpuinit, second regexp
+3049cef cpuinit: get rid of __cpuinit, first regexp
+1b5cd31 drivers: cpufreq: address issue where cpus forget their clock speeds
+77cd8c7 mach-msm/cpufreq Revert: Forcing 1.7ghz as current policy allow userspace to control with set max pol
+f9a8a37 drivers/cpufreq Add:intellidemand
+1319961 acpu: show a useful warn message
+aa84e2c Voltage Control: initial voltage control for MSM S4-Pro SOC
+9f9fb2b arch/arm/mach-msm/ Add: Initial OC
+f4ccb1b force fastcharge
+ee785dd Import Topology drivers from CAF
+55d0e0d acpu: export krait variant to debugfs
+222c785 acpu: export krait variant to debugfs
+e74f800 fix gcc4.7 compile
+beae39b Linaro -O3 fixes
+ed32dee Fixing earpiece amplification in call.
+87f405a Adding Defconfig pulled from ATT device
+39d5f95 HTC Source m7ul-3.4.10-jb-crc-ddcfb8c

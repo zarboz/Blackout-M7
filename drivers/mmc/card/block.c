@@ -2193,7 +2193,7 @@ static int sd_blk_issue_rw_rq(struct mmc_queue *mq, struct request *rqc)
 				break;
 			
 			try_recovery++;
-			if (try_recovery < 2 && card->do_remove == 0) {
+			if (try_recovery <= 3 && card->do_remove == 0) {
 				do_reinit = 1;
 				goto recovery;
 			} else {
@@ -2207,7 +2207,7 @@ static int sd_blk_issue_rw_rq(struct mmc_queue *mq, struct request *rqc)
 			err = mmc_blk_reset(md, card->host, type);
 			
 			try_recovery++;
-			if (try_recovery < 2 && card->do_remove == 0) {
+			if (try_recovery <= 3 && card->do_remove == 0) {
 				do_reinit = 1;
 				goto recovery;
 			} else {
@@ -2225,7 +2225,7 @@ static int sd_blk_issue_rw_rq(struct mmc_queue *mq, struct request *rqc)
 			}
 			
 			try_recovery++;
-			if (try_recovery < 2 && card->do_remove == 0) {
+			if (try_recovery <= 3 && card->do_remove == 0) {
 				do_reinit = 1;
 				goto recovery;
 			} else {
