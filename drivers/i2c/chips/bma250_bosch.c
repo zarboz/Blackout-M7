@@ -102,6 +102,58 @@ static int PICK_WAKE_ENABLED = 0;
 static int suspended = 1;
 static int screen_on = 1;
 
+#ifdef CONFIG_CMDLINE_OPTIONS
+static int __init synaptics_read_f2w_cmdline(char *f2w)
+{
+	if (strcmp(f2w, "1") == 0) {
+		printk(KERN_INFO "[cmdline_f2w]: Flick2Wake Enabled. | f2w='%s'", f2w);
+		FLICK_WAKE_ENABLED = 1;
+	} else if (strcmp(f2w, "0") == 0) {
+		printk(KERN_INFO "[cmdline_f2w]: Flick2Wake Disabled. | f2w='%s'", f2w);
+		FLICK_WAKE_ENABLED = 0;
+		
+	} else {
+		printk(KERN_INFO "[cmdline_f2w]: No valid input found. Gyro Magic disabled. | f2w='%s'", f2w);
+		FLICK_WAKE_ENABLED = 0;
+	}
+	return 1;
+}
+__setup("f2w=", synaptics_read_f2w_cmdline);
+
+static int __init synaptics_read_f2s_cmdline(char *f2s)
+{
+	if (strcmp(f2s, "1") == 0) {
+		printk(KERN_INFO "[cmdline_f2s]: Flick2Sleep enabled. | f2s='%s'", f2s);
+		FLICK_SLEEP_ENABLED = 1;
+	} else if (strcmp(f2s, "0") == 0) {
+		printk(KERN_INFO "[cmdline_f2s]: Flick2Sleep disabled. | f2s='%s'", f2s);
+		FLICK_SLEEP_ENABLED = 0;
+	 } else {
+		printk(KERN_INFO "[cmdline_f2s]: No valid input found. Gyro Magic disabled. | f2s='%s'", f2s);
+		FLICK_SLEEP_ENABLED = 0;
+	}
+	return 1;
+}
+__setup("f2s=", synaptics_read_f2s_cmdline);
+
+static int __init synaptics_read_p2w_cmdline(char *p2w)
+{
+	if (strcmp(p2w, "1") == 0) {
+		printk(KERN_INFO "[cmdline_p2w]: Pick2Wake enabled. | p2w='%s'", p2w);
+		PICK_WAKE_ENABLED = 1;
+	} else if (strcmp(p2w, "0") == 0) {
+		printk(KERN_INFO "[cmdline_p2w]: Pick2Wake disabled. | p2w='%s'", p2w);
+		PICK_WAKE_ENABLED = 0;
+	 } else {
+		printk(KERN_INFO "[cmdline_p2w]: No valid input found. Gyro Magic disabled. | p2w='%s'", p2w);
+		PICK_WAKE_ENABLED = 0;
+	}
+	return 1;
+}
+__setup("p2w=", synaptics_read_p2w_cmdline);
+
+
+#endif
 static int keep_sensor_on(void)
 {
 	return PICK_WAKE_ENABLED;
@@ -2183,10 +2235,10 @@ static ssize_t bma250_enable_show(struct device *dev,
 
 }
 
-#ifdef CONFIG_BMA250_WAKE_OPTIONS
+
 
 static ssize_t bma250_setup_interrupt_for_wake(struct bma250_data *bma250);
-
+#ifdef CONFIG_BMA250_WAKE_OPTIONS
 static int MIN_SLEEP_TIME_MAX = 5;
 static char MIN_SLEEP_TIME_MAX_C = '5';
 
