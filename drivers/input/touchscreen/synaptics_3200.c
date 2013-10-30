@@ -157,10 +157,13 @@ extern uint8_t touchscreen_is_on(void)
 
 #ifdef CONFIG_TOUCHSCREEN_SYNAPTICS_SWEEP2WAKE
 
+
+int pwp_switch = 1; // 1 -> pocket wake protection on, 2 -> pocket wake protection with only near check , no dark check ;  0 - off
 int s2w_switch = 1;
 int l2m_switch = 1;
 int l2w_switch = 0;
 int dt2w_switch = 1;
+
 int pocket_detect = 1;
 int s2w_wakestat = 0;
 int s2w_hist[2] = {0, 0};
@@ -179,7 +182,40 @@ static int break_longtap_count = 0;
 static struct input_dev * sweep2wake_pwrdev;
 static DEFINE_MUTEX(pwrkeyworklock);
 static DEFINE_MUTEX(longtap_count_lock);
+#ifdef CONFIG_CMDLINE_OPTIONS
+static int __init synaptics_read_s2w_cmdline(char *s2w)
+{
+	if (strcmp(s2w, "1") == 0) {
+		printk(KERN_INFO "[cmdline_s2w]: Sweep2Wake enabled. | s2w='%s'", s2w);
+		s2w_switch = 1;
+	} else if (strcmp(s2w, "0") == 0) {
+		printk(KERN_INFO "[cmdline_s2w]: Sweep2Wake disabled. | s2w='%s'", s2w);
+		s2w_switch = 0;
+	} else {
+		printk(KERN_INFO "[cmdline_s2w]: No valid input found. Panel Magic disabled. | s2w='%s'", s2w);
+		s2w_switch = 0;
+	}
+	return 1;
+}
+__setup("s2w=", synaptics_read_s2w_cmdline);
 
+static int __init synaptics_read_dt2w_cmdline(char *dt2w)
+{
+	if (strcmp(dt2w, "1") == 0) {
+		printk(KERN_INFO "[cmdline_dt2w]: DoubleTape2Wake enabled. | dt2w='%s'", dt2w);
+		dt2w_switch = 1;
+	} else if (strcmp(dt2w, "0") == 0) {
+		printk(KERN_INFO "[cmdline_dt2w]: DoubleTap2Wake disabled. | dt2w='%s'", dt2w);
+		dt2w_switch = 0;
+	 } else {
+		printk(KERN_INFO "[cmdline_s2w]: No valid input found. Panel Magic disabled. | s2w='%s'", dt2w);
+		s2w_switch = 0;
+	}
+	return 1;
+}
+__setup("dt2w=", synaptics_read_dt2w_cmdline);
+
+#endif
 extern void sweep2wake_setdev(struct input_dev * input_device) {
 	sweep2wake_pwrdev = input_device;
 	return;
@@ -189,8 +225,8 @@ EXPORT_SYMBOL(sweep2wake_setdev);
 static void sweep2wake_presspwr(struct work_struct * sweep2wake_presspwr_work) {
 	int pocket_mode = 0;
 	
-	if (pocket_detect == 1)
-		pocket_mode = power_key_check_in_pocket();
+	if ( scr_suspended == true && pwp_switch >= 1 && power_key_check_in_pocket((pwp_switch == 1)?1:0) ) return; // don't wake if in pocket
+
 
 	if (l2w_switch == 1)
 		break_longtap_count = 1;
@@ -275,7 +311,7 @@ static void logo2wake_longtap_count(struct work_struct * logo2wake_longtap_count
 		printk("[L2W] sending event KEY_POWER 1\n");
 
 		if (pocket_detect == 1)
-			pocket_mode = power_key_check_in_pocket();
+			pocket_mode = scr_suspended == false || pwp_switch == 0 || (pwp_switch >= 1 && !power_key_check_in_pocket((pwp_switch==1)?1:0));
 
 		if (!pocket_mode || pocket_detect == 0) {
 			vibrate(15);
