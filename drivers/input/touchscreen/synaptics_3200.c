@@ -208,12 +208,45 @@ static int __init synaptics_read_dt2w_cmdline(char *dt2w)
 		printk(KERN_INFO "[cmdline_dt2w]: DoubleTap2Wake disabled. | dt2w='%s'", dt2w);
 		dt2w_switch = 0;
 	 } else {
-		printk(KERN_INFO "[cmdline_s2w]: No valid input found. Panel Magic disabled. | s2w='%s'", dt2w);
-		s2w_switch = 0;
+		printk(KERN_INFO "[cmdline_s2w]: No valid input found. Panel Magic disabled. | dt2w='%s'", dt2w);
+		dt2w_switch = 0;
 	}
 	return 1;
 }
 __setup("dt2w=", synaptics_read_dt2w_cmdline);
+
+static int __init synaptics_read_l2w_cmdline(char *l2w)
+{
+	if (strcmp(l2w, "1") == 0) {
+		printk(KERN_INFO "[cmdline_l2w]: Logo2Wake enabled. | l2w='%s'", l2w);
+		l2w_switch = 1;
+	} else if (strcmp(dt2w, "0") == 0) {
+		printk(KERN_INFO "[cmdline_l2w]: Logo2Wake disabled. | l2w='%s'", l2w);
+		l2w_switch = 0;
+	 } else {
+		printk(KERN_INFO "[cmdline_l2w]: No valid input found. Panel Magic disabled. | l2w='%s'", l2w);
+		l2w_switch = 0;
+	}
+	return 1;
+}
+__setup("l2w=", synaptics_read_l2w_cmdline);
+
+static int __init synaptics_read_l2m_cmdline(char *l2m)
+{
+	if (strcmp(l2m, "1") == 0) {
+		printk(KERN_INFO "[cmdline_l2m]: Logo2Menu enabled. | l2m='%s'", l2m);
+		l2m_switch = 1;
+	} else if (strcmp(l2m, "0") == 0) {
+		printk(KERN_INFO "[cmdline_l2m]: Logo2Menu disabled. | l2m='%s'", l2m);
+		l2m_switch = 0;
+	 } else {
+		printk(KERN_INFO "[cmdline_l2m]: No valid input found. Panel Magic disabled. | l2m='%s'", l2m);
+		l2m_switch = 0;
+	}
+	return 1;
+}
+__setup("l2m=", synaptics_read_l2m_cmdline);
+
 
 #endif
 extern void sweep2wake_setdev(struct input_dev * input_device) {
